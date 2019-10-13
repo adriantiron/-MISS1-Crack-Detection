@@ -2,5 +2,5 @@
 
 Contact info:
 
--adriantironalt@gmail.com
--adrian.tiron@info.uaic.ro
+- adriantironalt@gmail.com
+- adrian.tiron@info.uaic.ro
