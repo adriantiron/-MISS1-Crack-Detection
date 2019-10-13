@@ -28,3 +28,6 @@
   https://www.sciencedirect.com/science/article/abs/pii/S0926580519301244
   
   https://www.semanticscholar.org/paper/NB-CNN%3A-Deep-Learning-Based-Crack-Detection-Using-Chen-Jahanshahi/414170e0f6959ec452c6da866a61a2a557682f56#related-papers
+
+  Trello:
+  https://trello.com/b/1AEogG9q/crack-detection-aset-2019
