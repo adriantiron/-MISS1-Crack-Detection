@@ -1,0 +1,60 @@
+Crack Detection
+
+Requirements:
+Implementing a platform that provides support for training a neural network to identify the presence of cracks in road images.
+The project will be developed in python programming language.
+The following tasks should be achieved:
+- gather road images to create a collection (training set / test set)
+- mark the images correspondingly: abnormal images (with cracks), normal images (no cracks)
+- use the fully convolutional U-Net neural network to perform image segmentation and classification
+- an algorithm to duplicate the train data in order to obtain alternative versions of images
+- an interface that will allow users to upload images and test the network and admins to add new training elements and retrain the network
+- the ability to identify the ratio at which an element is classified
+- download a representation for the analyzed data of a tested image (csv, xml, json)
+- a login system for normal users and admin users, featuring a database and password hashing
+- a system for checking the validity of an uploaded image and resizing it if needed
+- creating unit tests using selenium
+- organizing work on different branches, merging
+
+Actors, roles, use cases:
+1) Normal user
+Role: Interact with the application, upload images, receive the result
+Use cases:  - login with his/her account or create a new one
+			- upload an image which is too big and must be resized
+			- test the image using the trained network in order to obtain a classification
+			- download the classification data (such as ratio, execution time, size of the identified crack etc.) in a certain format
+
+2) Admin user
+Role: Change the train data of the network or add new data, then retrain it
+Use cases:  - login with his/her account
+			- add new images to the train set and retrain the network
+			- download data from the training process (such as number of images, execution time, average ratio etc.) in a certain format
+			- be able to add a normal user as an admin
+
+3) Database
+Role: Keep the information on users
+Use cases:  - add new user when a new account is created
+			- perform hashing on the password for extra security
+			- specify the type of each account (normal/admin)
+			- modify the type of an account (normal->admin, admin->normal)
+
+4) Backend
+Role: Implement the processing of login actions, upload actions, test/train for the neural network
+Use cases:  - check the database to determine the existence of an account
+			- send the information of a newly created account to the database
+			- process an uploaded test image by resizing and sending to the neural network
+			- obtain the information relevant to the classification of the image
+			- converting this information in a certain format (csv, xml, json)
+			- retraining the network
+
+5) Frontend
+Role: The interface that a user interacts with
+Use cases:  - a login page in which a user can input its credentials
+			- a create account window for new users
+			- a main page in which a user may check its data (such as date of creation, username, number of uploads etc.) and upload an image
+			- a loading screen for when the backend processes the image
+			- an error screen for possible exceptions thrown
+			- a result page, containing the classification result and a download of additional data in selected format
+			- an admin page for managing the training data and retraining the network
+			- an admin page for results of the retrianing process and downloading additional data in selected format
+			- an admin page for managing the existing users and changing their rank
