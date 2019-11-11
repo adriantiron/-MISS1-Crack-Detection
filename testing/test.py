@@ -17,6 +17,11 @@ class TestStringMethods(unittest.TestCase):
         for filename in glob.glob('Images/*.jpg'):
             Image.open(filename)
 
+    def test_is_image(self):
+        for filename in glob.glob('Images/*'):
+            img = Image.open(filename)
+            img.verify()
+
     def test_image_format(self):
         for filename in glob.glob('Images/*'):
             img = Image.open(filename)
@@ -28,8 +33,9 @@ class TestStringMethods(unittest.TestCase):
             img = Image.open(filename)
             if i == 0:
                 test_img = Image.open(filename)
+                test_filename = filename
                 i += 1
-            self.assertEqual(test_img.size, img.size, 'Images from different sets detected')
+            self.assertEqual(test_img.size, img.size, 'Images from different sets detected: (' + test_filename + ' and ' + filename + ')')
 
 
 unittest.main()
