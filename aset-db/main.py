@@ -2,7 +2,7 @@ import hashlib as hl
 import psycopg2
 
 
-# 0 = already exists; 1 = success
+# -1 = already exists; 1 = success
 def add_user(usern, pw):
     try:
         conn = psycopg2.connect(user="postgres",
