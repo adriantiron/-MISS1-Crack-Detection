@@ -3,6 +3,7 @@ from tkinter import filedialog
 from test_network import predict
 from train_network import retrain_nn
 import os
+import db
 
 
 def retrain():
@@ -96,13 +97,15 @@ def register_user():
     username_info = username.get()
     password_info = password.get()
 
-    file = open(username_info, "w")
-    file.write(username_info + "\n")
-    file.write(password_info)
-    file.close()
+    # file = open(username_info, "w")
+    # file.write(username_info + "\n")
+    # file.write(password_info)
+    # file.close()
+    #
+    # username_entry.delete(0, END)
+    # password_entry.delete(0, END)
 
-    username_entry.delete(0, END)
-    password_entry.delete(0, END)
+    db.add_user(username_info, password_info)
 
     global info_label
     try:
@@ -116,19 +119,32 @@ def register_user():
 def login_verify():
     username1 = username_verify.get()
     password1 = password_verify.get()
-    username_login_entry.delete(0, END)
-    password_login_entry.delete(0, END)
+    # username_login_entry.delete(0, END)
+    # password_login_entry.delete(0, END)
 
-    list_of_files = os.listdir()
-    if username1 in list_of_files:
-        file1 = open(username1, "r")
-        verify = file1.read().splitlines()
-        if password1 in verify:
-            login_sucess()
+    # list_of_files = os.listdir()
+    # if username1 in list_of_files:
+    #     file1 = open(username1, "r")
+    #     verify = file1.read().splitlines()
+    #     if password1 in verify:
+    #         login_sucess()
+    #         upload()
+    #         retrain()
+    #     else:
+    #         password_not_recognised()
+    # else:
+    #     user_not_found()
+
+    login_check = db.login_check(username1, password1)
+    if login_check == 1:
+        login_sucess()
+        user_type = db.user_type_check(username1)
+        if user_type == 0:
             upload()
+        elif user_type == 1:
             retrain()
-        else:
-            password_not_recognised()
+    elif login_check == -1:
+        password_not_recognised()
     else:
         user_not_found()
 
@@ -179,4 +195,5 @@ def main_account_screen():
     main_screen.mainloop()
 
 
+# db.delete()
 main_account_screen()
