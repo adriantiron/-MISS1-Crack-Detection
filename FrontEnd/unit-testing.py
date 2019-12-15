@@ -27,3 +27,5 @@ class TestClass:
 
 
 # terminal command = pytest unit-testing.py
+
+# TODO unit test for uploading test image, check result

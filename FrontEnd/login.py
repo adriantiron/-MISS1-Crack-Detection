@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 from test_network import predict
 from train_network import retrain_nn
-import os, db, decorators
+import os, db, decorators, validators
 
 
 def retrain():
@@ -31,14 +31,16 @@ def upload_image():
         info_label.destroy()
     except:
         pass
-
     try:
+        # Manually emulated MOP
+        if not validators.valid_image(file_path):
+            raise Exception("File is not image")
         result = predict(file_path)
         info_label = Label(upload_screen, text=result, fg="green", font=("calibri", 11))
         info_label.pack()
         return 1
-    except:
-        info_label = Label(upload_screen, text="File is not image", fg="red", font=("calibri", 11))
+    except Exception as e:
+        info_label = Label(upload_screen, text=str(e), fg="red", font=("calibri", 11))
         info_label.pack()
 
 

@@ -5,6 +5,7 @@ from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import load_img
 import numpy as np, glob
 from PIL import Image
+import validators
 
 
 def retrain_nn():
@@ -35,6 +36,11 @@ def retrain_nn():
 
     train_dir = "../Dataset/Train"
     validation_dir = "../Dataset/Test"
+
+    # Manually emulated MOP
+    validators.valid_input_folder(train_dir)
+    validators.valid_input_folder(validation_dir)
+
     batch_size = 300
     train_length = 38000
     validation_length = 2000
