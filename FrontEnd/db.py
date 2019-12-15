@@ -1,8 +1,10 @@
 import hashlib as hl
 import psycopg2
+import decorators
 
 
 # -1 = already exists; 1 = success
+@decorators.db_decorator
 def add_user(usern, pw):
     try:
         conn = psycopg2.connect(user="postgres",
@@ -27,6 +29,7 @@ def add_user(usern, pw):
 
 # print(add_user('user1', 'pw1'))
 # -1 = wrong password; 0 = no user with that name in db; 1 = all good
+@decorators.db_decorator
 def login_check(usn, pw):
     try:
         conn = psycopg2.connect(user="postgres",
@@ -52,7 +55,6 @@ def login_check(usn, pw):
 
 # print(login_check('user1', 'pw1'))
 
-
 def delete():
     try:
         conn = psycopg2.connect(user="postgres",
@@ -75,6 +77,7 @@ def delete():
 
 
 # 0 = normal user; 1 = admin user
+@decorators.db_decorator
 def user_type_check(usn):
     try:
         conn = psycopg2.connect(user="postgres",

@@ -2,8 +2,7 @@ from tkinter import *
 from tkinter import filedialog
 from test_network import predict
 from train_network import retrain_nn
-import os
-import db
+import os, db, decorators
 
 
 def retrain():
@@ -24,6 +23,7 @@ def upload():
     Button(upload_screen, text="Upload an image", height="2", width="30", command=upload_image).pack()
 
 
+@decorators.fe_decorator
 def upload_image():
     file_path = filedialog.askopenfilename()
     global info_label
@@ -35,9 +35,10 @@ def upload_image():
     try:
         result = predict(file_path)
         info_label = Label(upload_screen, text=result, fg="green", font=("calibri", 11))
+        info_label.pack()
+        return 1
     except:
         info_label = Label(upload_screen, text="File is not image", fg="red", font=("calibri", 11))
-    finally:
         info_label.pack()
 
 
@@ -93,17 +94,10 @@ def login():
     Button(login_screen, text="Login", width=10, height=1, command=login_verify).pack()
 
 
+@decorators.fe_decorator
 def register_user():
     username_info = username.get()
     password_info = password.get()
-
-    # file = open(username_info, "w")
-    # file.write(username_info + "\n")
-    # file.write(password_info)
-    # file.close()
-    #
-    # username_entry.delete(0, END)
-    # password_entry.delete(0, END)
 
     db.add_user(username_info, password_info)
 
@@ -114,26 +108,12 @@ def register_user():
         pass
     info_label = Label(register_screen, text="Registration Success", fg="green", font=("calibri", 11))
     info_label.pack()
+    return 1
 
 
 def login_verify():
     username1 = username_verify.get()
     password1 = password_verify.get()
-    # username_login_entry.delete(0, END)
-    # password_login_entry.delete(0, END)
-
-    # list_of_files = os.listdir()
-    # if username1 in list_of_files:
-    #     file1 = open(username1, "r")
-    #     verify = file1.read().splitlines()
-    #     if password1 in verify:
-    #         login_sucess()
-    #         upload()
-    #         retrain()
-    #     else:
-    #         password_not_recognised()
-    # else:
-    #     user_not_found()
 
     login_check = db.login_check(username1, password1)
     if login_check == 1:
@@ -149,6 +129,7 @@ def login_verify():
         user_not_found()
 
 
+@decorators.fe_decorator
 def login_sucess():
     global login_screen
     global info_label
@@ -158,8 +139,10 @@ def login_sucess():
         pass
     info_label = Label(login_screen, text="Login Success", fg="green", font=("calibri", 11))
     info_label.pack()
+    return 1
 
 
+@decorators.fe_decorator
 def password_not_recognised():
     global login_screen
     global info_label
@@ -169,8 +152,10 @@ def password_not_recognised():
         pass
     info_label = Label(login_screen, text="Invalid Password", fg="red", font=("calibri", 11))
     info_label.pack()
+    return 1
 
 
+@decorators.fe_decorator
 def user_not_found():
     global login_screen
     global info_label
@@ -180,6 +165,7 @@ def user_not_found():
         pass
     info_label = Label(login_screen, text="User Not Found", fg="red", font=("calibri", 11))
     info_label.pack()
+    return 1
 
 
 def main_account_screen():

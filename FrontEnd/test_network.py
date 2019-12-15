@@ -2,9 +2,10 @@ from keras.models import load_model
 from keras.preprocessing.image import load_img
 from keras.preprocessing.image import img_to_array
 import numpy as np
-import os
+import os, decorators
 
 
+@decorators.nn_decorator
 def predict(image_path):
     model = load_model('model.h5')
     image = load_img(image_path)
