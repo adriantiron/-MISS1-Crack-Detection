@@ -5,11 +5,8 @@ from keras.callbacks import ModelCheckpoint
 import os, cv2, random, numpy as np
 import validators
 
-img_size = 128
-batch_size = 64
-epochs_nu = 10
 
-def model_init():
+def model_init(img_size):
     model = Sequential()
 
     model.add(Conv2D(16, (3, 3), activation="relu", input_shape=(img_size, img_size, 1)))
@@ -36,7 +33,7 @@ def model_init():
     return model
 
 
-def data_prep():
+def data_prep(img_size):
     train_dir = "Dataset\\Train"
     validation_dir = "Dataset\\Test"
     categories = ["Positive", "Negative"]
@@ -83,7 +80,7 @@ def data_prep():
     return x_train, y_train, x_val, y_val
 
 
-def train_nn(model, x_train, y_train, x_val, y_val):
+def train_nn(model, x_train, y_train, x_val, y_val, batch_size, epochs_nu):
     # This will slightly warp and transform the images so we have more training data
     aug = ImageDataGenerator(
         rescale=1./255,
@@ -112,7 +109,9 @@ def train_nn(model, x_train, y_train, x_val, y_val):
     model.save(os.path.join(os.getcwd(), 'crack.model.h5'))
 
 
-def retrain_nn():
-    xt, yt, xv, yv = data_prep()
-    new_model = model_init()
-    train_nn(new_model, xt, yt, xv, yv)
+def retrain_nn(batch_sz, epochs_nu):
+    img_size = 128
+
+    xt, yt, xv, yv = data_prep(img_size)
+    new_model = model_init(img_size)
+    train_nn(new_model, xt, yt, xv, yv, batch_sz, epochs_nu)
