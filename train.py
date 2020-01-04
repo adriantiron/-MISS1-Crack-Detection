@@ -6,6 +6,7 @@ import os, cv2, random, numpy as np
 
 img_size = 128
 batch_size = 64
+epochs_nu = 10
 
 
 def model_init():
@@ -101,7 +102,7 @@ def train_nn(model, x_train, y_train, x_val, y_val):
     train = model.fit(
         aug.flow(x_train, y_train, batch_size=batch_size),
         steps_per_epoch=len(x_train)/batch_size,
-        epochs=10,
+        epochs=epochs_nu,
         verbose=1,
         validation_data=aug.flow(x_val, y_val, batch_size=batch_size),
         validation_steps=len(x_val)/batch_size,
