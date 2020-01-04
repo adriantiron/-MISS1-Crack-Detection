@@ -10,11 +10,10 @@ def predict(image_path):
     model = load_model('model.h5')
     if not validators.valid_image(image_path):
         return "File is not image"
-    image = load_img(image_path)
-    image = image.resize((128, 128))
-    image = img_to_array(image)
-    image = np.expand_dims(image, axis=0)
-    images = np.vstack([image])
-    prediction = model.predict(images)
+    
+    img_sz = 128
+    image = cv2.resize(cv2.imread(image_path, cv2.IMREAD_GRAYSCALE), (img_sz, img_sz))
+    image = np.array(image).reshape(img_sz, img_sz, 1)
+    prediction = model.predict(image)
     return "{} precision: {} %".format(os.path.basename(image_path), prediction[0][0] * 100)
 
