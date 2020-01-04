@@ -1,19 +1,24 @@
 from keras.models import load_model
-from keras.preprocessing.image import load_img
-from keras.preprocessing.image import img_to_array
 import numpy as np
-import os, decorators, validators
+import os, cv2
 
 
-@decorators.nn_decorator
+# 0 = POSITIVE, 1 = NEGATIVE
 def predict(image_path):
     model = load_model('model.h5')
-    if not validators.valid_image(image_path):
-        return "File is not image"
-    
+
     img_sz = 128
     image = cv2.resize(cv2.imread(image_path, cv2.IMREAD_GRAYSCALE), (img_sz, img_sz))
-    image = np.array(image).reshape(img_sz, img_sz, 1)
+    image = np.array(image).reshape(1, img_sz, img_sz, 1) / 255.0
     prediction = model.predict(image)
-    return "{} precision: {} %".format(os.path.basename(image_path), prediction[0][0] * 100)
 
+    closeness = prediction[0][0]
+    if round(closeness) == 0:
+        classification = "POSITIVE CRACK"
+    else:
+        classification = "NEGATIVE CRACK"
+
+    return "{} class closeness: {} to class {}".format(os.path.basename(image_path), closeness, classification)
+
+
+print(predict("E:\\Programs\\Coding\\ASET Crack Detection\\Dataset\\Test\\Positive\\039.png"))
