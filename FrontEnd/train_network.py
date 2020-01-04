@@ -5,12 +5,10 @@ from keras.callbacks import ModelCheckpoint
 import os, cv2, random, numpy as np
 import validators
 
+img_size = 128
+batch_size = 64
 
-def retrain_nn():
-    img_size = 128
-    batch_size = 64
-
-    # Model initialization
+def model_init():
     model = Sequential()
 
     model.add(Conv2D(16, (3, 3), activation="relu", input_shape=(img_size, img_size, 1)))
@@ -34,15 +32,12 @@ def retrain_nn():
     model.compile(loss='binary_crossentropy',
                   optimizer='adam',
                   metrics=['accuracy'])
+    return model
 
-    # Preparing the data
-    train_dir = "..\\Dataset\\Train"
-    validation_dir = "..\\Dataset\\Test"
-    
-    # Manually emulated MOP
-    validators.valid_input_folder(train_dir)
-    validators.valid_input_folder(validation_dir)
 
+def data_prep():
+    train_dir = "Dataset\\Train"
+    validation_dir = "Dataset\\Test"
     categories = ["Positive", "Negative"]
     images_array = []
     val_array = []
@@ -53,15 +48,15 @@ def retrain_nn():
         class_num = categories.index(category)
 
         for img in os.listdir(path):
-            filename, extens = os.path.splitext(img)
-            if extens in ['.jpg', '.png']:
+            filename, extension = os.path.splitext(img)
+            if extension in ['.jpg', '.png']:
                 img_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE)
                 new_array = cv2.resize(img_array, (img_size, img_size))
                 images_array.append([new_array, class_num])
 
         for img in os.listdir(val_path):
-            filename, extens = os.path.splitext(img)
-            if extens in ['.jpg', '.png']:
+            filename, extension = os.path.splitext(img)
+            if extension in ['.jpg', '.png']:
                 img_array = cv2.imread(os.path.join(val_path, img), cv2.IMREAD_GRAYSCALE)
                 new_array = cv2.resize(img_array, (img_size, img_size))
                 val_array.append([new_array, class_num])
@@ -84,9 +79,13 @@ def retrain_nn():
     x_train = np.array(x_train).reshape(len(x_train), img_size, img_size, 1)
     x_val = np.array(x_val).reshape(len(x_val), img_size, img_size, 1)
 
+    return x_train, y_train, x_val, y_val
+
+
+def train_nn(model, x_train, y_train, x_val, y_val):
     # This will slightly warp and transform the images so we have more training data
     aug = ImageDataGenerator(
-        rescale=1. / 255,
+        rescale=1./255,
         rotation_range=30,
         zoom_range=0.15,
         width_shift_range=0.2,
@@ -98,16 +97,21 @@ def retrain_nn():
     aug.fit(x_val)
 
     # This saves the best model after an epoch, so we don't lose progress if it crashes
-    checkpoint = ModelCheckpoint("crack.model.h5", monitor='val_accuracy', verbose=1, save_best_only=True,
-                                 mode='max')
+    checkpoint = ModelCheckpoint("keras-crack.model.h5", monitor='val_accuracy', verbose=1, save_best_only=True, mode='max')
     train = model.fit(
         aug.flow(x_train, y_train, batch_size=batch_size),
-        steps_per_epoch=len(x_train) / batch_size,
+        steps_per_epoch=len(x_train)/batch_size,
         epochs=10,
         verbose=1,
         validation_data=aug.flow(x_val, y_val, batch_size=batch_size),
-        validation_steps=len(x_val) / batch_size,
+        validation_steps=len(x_val)/batch_size,
         callbacks=[checkpoint]
     )
 
-    model.save(os.path.join(os.getcwd(), 'model.h5'))
+    model.save(os.path.join(os.getcwd(), 'crack.model.h5'))
+
+
+def retrain_nn():
+    xt, yt, xv, yv = data_prep()
+    new_model = model_init()
+    train_nn(new_model, xt, yt, xv, yv)
