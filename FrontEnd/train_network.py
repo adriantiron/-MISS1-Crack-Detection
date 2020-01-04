@@ -34,8 +34,8 @@ def model_init(img_size):
 
 
 def data_prep(img_size):
-    train_dir = "Dataset\\Train"
-    validation_dir = "Dataset\\Test"
+    train_dir = "..\\Dataset\\Train"
+    validation_dir = "..\\Dataset\\Test"
     categories = ["Positive", "Negative"]
     images_array = []
     val_array = []

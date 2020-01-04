@@ -1,47 +1,167 @@
 from tkinter import *
 from tkinter import filedialog
-from test_network import predict
-from train_network import retrain_nn
+import test_network as tn
+from train_network import retrain_nn, train_nn, data_prep, model_init
+from dl import csv_dl, xml_dl, json_dl
 import os, db, decorators, validators
 
 
 def retrain():
-    global retrain_screen
+    global retrain_screen, batches, epochs
     retrain_screen = Toplevel(main_screen)
     retrain_screen.title("Crack detection")
     retrain_screen.geometry("300x200")
     Label(retrain_screen, text="").pack()
-    Button(retrain_screen, text="Retrain the network", height="2", width="30", command=retrain_nn).pack()
+    Label(retrain_screen, text="Number batches:").pack()
+    batches = Entry(retrain_screen)
+    batches.pack()
+    Label(retrain_screen, text="Number epochs:").pack()
+    epochs = Entry(retrain_screen)
+    epochs.pack()
+    Label(retrain_screen, text="").pack()
+    Button(retrain_screen, text="Retrain the network", height="2", width="30", command=retrain_do).pack()
 
 
-def upload():
-    global upload_screen
-    upload_screen = Toplevel(main_screen)
-    upload_screen.title("Crack detection")
-    upload_screen.geometry("300x200")
-    Label(upload_screen, text="").pack()
-    Button(upload_screen, text="Upload an image", height="2", width="30", command=upload_image).pack()
-
-
-@decorators.fe_decorator
-def upload_image():
-    file_path = filedialog.askopenfilename()
+def retrain_do():
     global info_label
     try:
         info_label.destroy()
     except:
         pass
     try:
+        if int(batches.get()) < 1 or int(epochs.get()) < 1:
+            raise Exception()
+        try:
+            info_label.destroy()
+        except:
+            pass
+        retrain_nn(int(batches.get()), int(epochs.get()))
+    except:
+        info_label = Label(retrain_screen, text="Batches and epochs must be integers > 0", fg="red", font=("calibri", 11))
+        info_label.pack()
+        return 1
+
+
+def upload():
+    global upload_screen, upload_frame, canvas, info_labels
+    info_labels = list()
+    upload_screen = Toplevel(main_screen)
+    upload_screen.title("Crack detection")
+    upload_screen.geometry("300x200")
+
+    canvas = Canvas(upload_screen)
+    vscrollbar = Scrollbar(upload_screen)
+    vscrollbar.config(command=canvas.yview)
+    vscrollbar.pack(side=LEFT, fill=Y)
+
+    upload_frame = Frame(canvas)
+    canvas.pack(side="left", fill="both", expand=True)
+    canvas.create_window(0, 0, window=upload_frame, anchor='nw')
+
+    Label(upload_frame, text="").pack()
+    Button(upload_frame, text="Upload an image", height="2", width="30", command=upload_image).pack()
+    Button(upload_frame, text="Upload a folder", height="2", width="30", command=upload_folder).pack()
+
+
+@decorators.fe_decorator
+def upload_image():
+    tn.images = list()
+    tn.predictions = list()
+    file_path = filedialog.askopenfilename()
+    global info_labels
+    try:
+        for label in info_labels:
+            label.destroy()
+    except:
+        pass
+    try:
         # Manually emulated MOP
         if not validators.valid_image(file_path):
             raise Exception("File is not image")
-        result = predict(file_path)
-        info_label = Label(upload_screen, text=result, fg="green", font=("calibri", 11))
-        info_label.pack()
+        result = tn.predict(file_path)
+        label = Label(upload_frame, text=result, fg="green", font=("calibri", 11))
+        label.pack()
+        info_labels.append(label)
+
+        create_downloaders()
+
+        upload_screen.update()
+        canvas.config(scrollregion=canvas.bbox("all"))
         return 1
     except Exception as e:
-        info_label = Label(upload_screen, text=str(e), fg="red", font=("calibri", 11))
-        info_label.pack()
+        label = Label(upload_frame, text=str(e), fg="red", font=("calibri", 11))
+        label.pack()
+        info_labels.append(label)
+        upload_screen.update()
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+
+@decorators.fe_decorator
+def upload_folder():
+    tn.images = list()
+    tn.predictions = list()
+    folder_path = filedialog.askdirectory()
+    global info_labels
+    try:
+        for label in info_labels:
+            label.destroy()
+    except:
+        pass
+    try:
+        for file_name in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file_name)
+            # Manually emulated MOP
+            if not validators.valid_image(file_path):
+                raise Exception("File is not image")
+            result = tn.predict(file_path)
+            label = Label(upload_frame, text=result, fg="green", font=("calibri", 11))
+            label.pack()
+            info_labels.append(label)
+
+        create_downloaders()
+
+        upload_screen.update()
+        canvas.config(scrollregion=canvas.bbox("all"))
+        return 1
+    except Exception as e:
+        label = Label(upload_frame, text=str(e), fg="red", font=("calibri", 11))
+        label.pack()
+        info_labels.append(label)
+        upload_screen.update()
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+
+def create_downloaders():
+    dl1 = Button(upload_frame, text="Download csv", height="2", width="30", command=csv_form)
+    dl1.pack()
+    info_labels.append(dl1)
+    dl2 = Button(upload_frame, text="Download xml", height="2", width="30", command=xml_form)
+    dl2.pack()
+    info_labels.append(dl2)
+    dl3 = Button(upload_frame, text="Download json", height="2", width="30", command=json_form)
+    dl3.pack()
+    info_labels.append(dl3)
+
+
+def get_test_data():
+    data = tn.get_nn_data()
+    path = filedialog.askdirectory()
+    return data, path
+
+
+def csv_form():
+    data, path = get_test_data()
+    csv_dl(data, path)
+
+
+def xml_form():
+    data, path = get_test_data()
+    xml_dl(data, path)
+
+
+def json_form():
+    data, path = get_test_data()
+    json_dl(data, path)
 
 
 def register():
@@ -125,7 +245,7 @@ def login_verify():
             upload()
         elif user_type == 1:
             retrain()
-    elif login_check == -1:
+    elif login_check == 0:
         password_not_recognised()
     else:
         user_not_found()

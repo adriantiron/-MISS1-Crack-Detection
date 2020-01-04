@@ -1,8 +1,8 @@
 import os, csv, json
 from dicttoxml import dicttoxml
 
-data = {"Elem1": "Val1", "Elem2": "Val2", "Elem3": "Val3"}
-path = r"D:\Projects\-MISS1-Crack-Detection\FrontEnd"
+# data = {"Elem1": "Val1", "Elem2": "Val2", "Elem3": "Val3"}
+# path = r"D:\Projects\-MISS1-Crack-Detection\FrontEnd"
 
 
 def csv_dl(data, path):
