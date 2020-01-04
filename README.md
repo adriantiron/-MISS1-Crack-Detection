@@ -14,6 +14,8 @@ Broad tasks:
 - mark the images correspondingly: abnormal images (with cracks), normal images (no cracks).
 - an array of algorithms based on Machine Learning & Neural Networks (etc.) will be implemented, which will detect if a test image is normal or not.
 
+NEW DATASET: https://drive.google.com/file/d/1P4ZzoMOifZwWc0-nmhlUidDyjQnM3pXQ/view?usp=sharing
+
 References:
 
 https://www.researchgate.net/publication/315613676_Deep_Learning-Based_Crack_Damage_Detection_Using_Convolutional_Neural_Networks
