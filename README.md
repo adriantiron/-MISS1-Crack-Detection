@@ -14,6 +14,8 @@ Broad tasks:
 - mark the images correspondingly: abnormal images (with cracks), normal images (no cracks).
 - an array of algorithms based on Machine Learning & Neural Networks (etc.) will be implemented, which will detect if a test image is normal or not.
 
+Libraries used for training the network (on Python 3.7): Keras 2.3.1, tensorflow 2.0.0, opencv-python 4.1.2.30, numpy 1.17.4, h5py 2.10.0 
+
 NEW DATASET: https://drive.google.com/file/d/1P4ZzoMOifZwWc0-nmhlUidDyjQnM3pXQ/view?usp=sharing
 
 References:
